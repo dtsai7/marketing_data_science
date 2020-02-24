@@ -251,3 +251,34 @@ def plot_confusion_matrix(cm, classes,
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
     fig.savefig(title+'.png', dpi=300)
+    
+def model_testRF(clf, 
+                 X_train,
+                 y_train,
+                 X_test,
+                 y_test,
+                 plot_name = 'logistic_regression'):
+    model = clf.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
+    y_pred_prob = model.predict_proba(X_test)[:,1]
+    
+    y_test_df=pd.DataFrame(y_test)
+    y_test_df[plot_name+'_pred'] = y_pred_prob
+    
+    #Confusion Matrix
+    conf_logist = confusion_matrix(y_test, y_pred)
+    
+ 
+    plot_confusion_matrix(conf_logist, ['no','buy'],
+                          title=plot_name+"Confusion Matrix plot", cmap=plt.cm.Reds)#, cmap=plt.cm.Reds
+    
+    # -------single model summary--------
+    
+
+    print( "################ summary ################ ")
+    
+    print(confusion_matrix(y_test, y_pred))
+#   print("____________________{}cohort analysis____________________".format(plot_name))
+#   print(classification_report(y_test, y_pred))
+    print("Training Accuracy = {:.3f}".format(model.score(X_train, y_train)))
+    print("Test Accuracy = {:.3f}".format(model.score(X_test, y_test)))
