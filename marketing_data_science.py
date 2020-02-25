@@ -251,7 +251,28 @@ def plot_confusion_matrix(cm, classes,
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
     fig.savefig(title+'.png', dpi=300)
+
     
+# transform_date
+def transform_date(data = None, columns = 'created_time', splitby = '-'):
+    
+    data[columns] = data[columns].str.replace('T','-')
+    data[columns] = data[columns].str.replace(':','-')
+    data[columns] = data[columns].str.split('+').str[0]
+    
+    col_num =  data[columns][0].count('-')+1
+    date = data[columns].str.split('-', col_num, expand=True)
+    date.columns = ['year', 'month', 'day', 'hour', 'min', 'sec']
+    
+    combine= pd.concat([data, date ], axis = 1) #keys=[],names=['gg', 'example'],
+    #combine.columns = [columns + '_cut', columns]
+    
+    # drop original col
+    fields_to_drop = [columns]
+    combine = combine.drop( fields_to_drop, axis = 1 )
+    return combine
+
+
 def model_testRF(clf, 
                  X_train,
                  y_train,
